@@ -7,6 +7,8 @@
 
 class Company {
 public:
+  Company() {}
+  
   Company(int key, const std::string& name, const std::string& slogan):
     key(key)
   {
@@ -26,10 +28,16 @@ public:
     fread(slogan, sizeof(char), 200, infile);
   }
 
+  void pretty_print() const {
+    std::cout << key << " " << name <<  " " << slogan << std::endl;
+  }
+
   // private:
   unsigned key;
   char name[100];
   char slogan[200];
+
+  static const unsigned OBJECT_SIZE = (100 + 200) * sizeof(char) + 1 * sizeof(unsigned);
 };
 
 void read_csv_file(char* infilename, char* outfilename) {
@@ -61,7 +69,7 @@ void read_csv_file(char* infilename, char* outfilename) {
 
     Company company(key, name, slogan);
     ++key;
-		
+
     company.write(output);
   }
 
@@ -69,13 +77,33 @@ void read_csv_file(char* infilename, char* outfilename) {
   input.close();
 }
 
-int main(int argc, char *argv[]) {
-  if (argc < 3) {
-    std::cerr << "usage: " << argv[0] << " " << "<input file (text)> <output file (binary)>" << std::endl;
-    return EXIT_FAILURE;
+void search_key(unsigned key, char * filename, const unsigned object_size){
+  FILE* file;
+
+  if((file = fopen(filename, "rb")) == NULL) {
+    std::cerr << "error: cannot open input file for reading: " << filename  << std::endl;
+    exit(EXIT_FAILURE);
   }
 
-  read_csv_file(argv[1], argv[2]);
+  // move cursor to entry
+  fseek(file, key * object_size, SEEK_CUR);
 
+  Company company;
+  company.read(file);
+
+  company.pretty_print();
+    
+  fclose(file);
+}
+
+int main(int argc, char *argv[]) {
+  // if (argc < 3) {
+    // std::cerr << "usage: " << argv[0] << " " << "<input file (text)> <output file (binary)>" << std::endl;
+    // return EXIT_FAILURE;
+  // }
+
+  // read_csv_file(argv[1], argv[2]);
+  search_key(3, argv[1], Company::OBJECT_SIZE);
+  
   return EXIT_SUCCESS;
 }

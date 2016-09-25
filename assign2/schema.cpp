@@ -2,10 +2,15 @@
 
 #include <fstream>
 
-Schema::Schema(const std::string& filename) {
+Schema::Schema(){
+    compute_size();
+}
+
+Schema::Schema(const std::string& filename) :
+    schema_filename(filename) {
     std::ifstream input(filename);
 
-    while(input) {
+    while(input.good()) {
         std::string datatype, column;
         std::getline(input, datatype, ',');
         std::getline(input, column);
@@ -33,4 +38,8 @@ void Schema::compute_size() {
             size += atoi(data.first.c_str() + 1);
         }
     }
+}
+
+std::string Schema::get_filename() const {
+    return schema_filename;
 }

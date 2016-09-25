@@ -14,11 +14,9 @@ SchemaDb::SchemaDb(const std::string& filename) :
         std::getline(input, schema_filename);
 
         int id = std::stoi(id_string);
-
         next_id = std::max(next_id, id);
 
-        Schema schema(schema_filename);
-        mapping[id] = schema;
+        mapping[id] = Schema(schema_filename, id);
     }
 
     ++next_id;
@@ -30,7 +28,8 @@ Schema SchemaDb::get_schema(int id) const {
     return mapping.at(id);
 }
 
-void SchemaDb::add_schema(const Schema& schema) {
+void SchemaDb::add_schema(const std::string& filename) {
+    Schema schema(filename, next_id);
     mapping[next_id] = schema;
 
     std::ofstream output(schemadb_filename, std::ofstream::app);

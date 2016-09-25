@@ -10,7 +10,7 @@ class SchemaDb {
 public:
     SchemaDb(const std::string& filename);
     Schema get_schema(int id) const;
-    void add_schema(const Schema& schema);
+    void add_schema(const std::string& filename);
 
 private:
     std::map<int, Schema> mapping;

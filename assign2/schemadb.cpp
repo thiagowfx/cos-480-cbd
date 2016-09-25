@@ -3,21 +3,16 @@
 #include <algorithm>
 #include <fstream>
 
-// TODO
-#include <iostream>
-
 SchemaDb::SchemaDb(const std::string& filename) :
     schemadb_filename(filename) {
     next_id = -1;
     std::ifstream input(filename);
 
-    while(input.good()) {
+    while(input.good() && input.peek() != EOF) {
         std::string id_string, schema_filename;
         std::getline(input, id_string, ',');
         std::getline(input, schema_filename);
 
-        // TODO
-        std::cout << "log: " << id_string << std::endl;
         int id = std::stoi(id_string);
 
         next_id = std::max(next_id, id);

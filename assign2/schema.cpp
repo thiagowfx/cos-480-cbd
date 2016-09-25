@@ -10,10 +10,11 @@ Schema::Schema(const std::string& filename) :
     schema_filename(filename) {
     std::ifstream input(filename);
 
-    while(input.good()) {
+    while(input.good() && input.peek() != EOF) {
         std::string datatype, column;
         std::getline(input, datatype, ',');
         std::getline(input, column);
+
         metadata.push_back(std::make_pair(datatype, column));
     }
 

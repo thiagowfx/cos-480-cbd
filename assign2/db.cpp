@@ -22,11 +22,16 @@ int main(int argc, char *argv[]) {
   int operation_flag = -1;
 
   static struct option long_options[] = {
+    // Modes.
     {"convert", no_argument, &operation_flag, OPERATION_CONVERT},
     {"create-index", no_argument, &operation_flag, OPERATION_CREATE_INDEX},
     {"search-index", no_argument, &operation_flag, OPERATION_SEARCH_INDEX},
+
+    // Mode options.
+    // {"schema", no_argument, &operation_flag, OPERATION_SEARCH_INDEX}, // TODO schema
     {"in", required_argument, NULL, 'i'},
     {"out", required_argument, NULL, 'o'},
+
     {"help", no_argument, NULL, 'h'},
     {NULL, 0, NULL, 0},
   };
@@ -55,8 +60,16 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if(operation_flag == - 1) {
-    usage(argv[0]);
+  switch(operation_flag) {
+    case -1:
+      usage(argv[0]);
+      break;
+    case OPERATION_CONVERT:
+      std::cout << "operation convert" << std::endl; // TODO logging
+      SchemaDb schemadb("../data/schema/schemadb.cfg"); // TODO schemadb hard-coded
+      schemadb.get_schema(0).convert_to_bin(infile, outfile, true); // TODO ignore_first_line
+      break;
+    // TODO more operations
   }
 
   return EXIT_SUCCESS;

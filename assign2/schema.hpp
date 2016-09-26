@@ -5,6 +5,8 @@
 #include <utility>
 #include <vector>
 
+#include "index.hpp"
+
 class Schema {
 public:
     Schema();
@@ -12,17 +14,24 @@ public:
     int get_size() const;
     int get_id() const;
     std::string get_filename() const;
-    void convert_to_bin(const std::string& csv_filename, const std::string& bin_filename, bool ignore_first_line = true) const;
+    void convert_to_bin(const std::string& csv_filename, const std::string& bin_filename, bool ignore_first_line = true) const;    
+    void create_index(const std::string& bin_filename, const std::string& index_filename);
+    void load_index(const std::string& index_filename);
+    int search_for_index(int index);
 
     static const int TIMESTAMP_SIZE = 30; // TODO
+    static const int HEADER_SIZE = TIMESTAMP_SIZE * sizeof(char) + 2 * sizeof(int);
 
 private:
+    
     void compute_size();
 
     std::vector< std::pair<std::string, std::string> > metadata;
     int size;
     std::string schema_filename;
     int id;
+    std::vector<std::pair<int, int> > index;
+    
 };
 
 #endif // SCHEMA_H

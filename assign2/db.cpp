@@ -72,6 +72,7 @@ int main(int argc, char *argv[]) {
     usage(argv[0]);
   }
 
+  SchemaDb schemadb(schemadb_filename);
   switch(operation_flag) {
     case -1:
       std::cout << "error: no mode specified" << std::endl;
@@ -79,8 +80,16 @@ int main(int argc, char *argv[]) {
       break;
     case OPERATION_CONVERT:
       std::cout << "mode: convert" << std::endl; // TODO logging
-      SchemaDb schemadb(schemadb_filename);
       schemadb.get_schema(0).convert_to_bin(infile, outfile, true); // TODO ignore_first_line flag
+      break;
+    case OPERATION_CREATE_INDEX:
+      std::cout << "mode: create index" << std::endl;
+      schemadb.get_schema(0).create_index(infile, outfile);
+      break;
+    case OPERATION_SEARCH_INDEX:
+      std::cout << "mode: search index" << std::endl;
+      schemadb.get_schema(0).load_index(infile);
+      schemadb.get_schema(0).search_for_index(0); // TODO complete search_for_index
       break;
     // TODO more operations
   }

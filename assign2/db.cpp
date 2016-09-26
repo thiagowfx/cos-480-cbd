@@ -8,9 +8,10 @@
 #include "schemadb.hpp"
 
 void usage(const char* program) {
-  std::cout << "usage: " << program << " --schemadb=<schemadb_filename> <mode> <mode options>" << std::endl;
+  std::cout << "usage: " << program << " --schemadb=<schemadb_filename> --schema=<schema_id> <mode> <mode options>" << std::endl;
   std::cout << "\t" << "mode: --convert --in <.csv file> --out <.bin file>" << std::endl;
   std::cout << "\t" << "mode: --create-index --in <.bin file> --out <.index file>" << std::endl;
+  std::cout << "\t" << "mode: --search-index --in <.index file> --key <key>" << std::endl;
   exit(EXIT_FAILURE);
 }
 
@@ -30,9 +31,11 @@ int main(int argc, char *argv[]) {
     {"search-index", no_argument, &operation_flag, OPERATION_SEARCH_INDEX},
 
     // Mode options.
+    {"schema", required_argument, NULL, 0},
     {"schemadb", required_argument, NULL, 0},
     {"in", required_argument, NULL, 'i'},
     {"out", required_argument, NULL, 'o'},
+    {"key", required_argument, NULL, 0},
 
     {"help", no_argument, NULL, 'h'},
     {NULL, 0, NULL, 0},
@@ -42,6 +45,8 @@ int main(int argc, char *argv[]) {
   int ch;
 
   std::string schemadb_filename;
+  int schema_id = 0;
+  int key = 0;
   std::string infile, outfile;
 
   while((ch = getopt_long(argc, argv, "hi:o:", long_options, &option_index)) != -1) {
@@ -55,6 +60,12 @@ int main(int argc, char *argv[]) {
       case 0:
         if(!strcmp(long_options[option_index].name, "schemadb")) {
           schemadb_filename = std::string(optarg);
+        }
+        else if(!strcmp(long_options[option_index].name, "schema")) {
+          schema_id = std::stoi(std::string(optarg));
+        }
+        else if(!strcmp(long_options[option_index].name, "key")) {
+          key = std::stoi(std::string(optarg));
         }
         break;
       case 'h':
@@ -79,17 +90,17 @@ int main(int argc, char *argv[]) {
       break;
     case OPERATION_CONVERT:
       std::cout << "mode: convert" << std::endl;
-      schemadb.get_schema(0).convert_to_bin(infile, outfile, true); // TODO ignore_first_line flag
+      schemadb.get_schema(schema_id).convert_to_bin(infile, outfile, true);
       break;
     case OPERATION_CREATE_INDEX:
       std::cout << "mode: create index" << std::endl;
-      schemadb.get_schema(0).create_index(infile, outfile);
+      schemadb.get_schema(schema_id).create_index(infile, outfile);
       break;
     case OPERATION_SEARCH_INDEX:
       std::cout << "mode: search index" << std::endl;
-      Schema schema = schemadb.get_schema(0);
+      Schema schema = schemadb.get_schema(schema_id);
       schema.load_index(infile);
-      schema.search_for_key(2);
+      schema.search_for_key(key);
       break;
   }
 

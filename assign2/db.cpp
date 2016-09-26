@@ -87,12 +87,13 @@ int main(int argc, char *argv[]) {
       break;
     case OPERATION_SEARCH_INDEX:
       std::cout << "mode: search index" << std::endl;
-      schemadb.get_schema(0).load_index(infile);
-      schemadb.get_schema(0).search_for_index(28); // TODO complete search_for_index
+      Schema schema = schemadb.get_schema(0);
+      schema.load_index(infile);
+      schema.search_for_key(2);
       break;
   }
 
   return EXIT_SUCCESS;
 }
 
-// TODO logging
+// TODO logging, error handling

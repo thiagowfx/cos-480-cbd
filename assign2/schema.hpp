@@ -15,13 +15,12 @@ public:
     void convert_to_bin(const std::string& csv_filename, const std::string& bin_filename, bool ignore_first_line = true) const;
     void create_index(const std::string& bin_filename, const std::string& index_filename) const;
     void load_index(const std::string& index_filename);
-    std::vector<std::pair<int,int> >::iterator search_for_index(int index);
+    int search_for_key(int key);
 
     static const int TIMESTAMP_SIZE = 30; // TODO
     static const int HEADER_SIZE = TIMESTAMP_SIZE * sizeof(char) + 2 * sizeof(int);
 
 private:
-
     void compute_size();
 
     std::vector< std::pair<std::string, std::string> > metadata;
@@ -30,7 +29,5 @@ private:
     int id;
     std::vector<std::pair<int, int> > index_map;
 };
-
-bool compare_index(const std::pair<int, int> op1, const std::pair<int, int> op2);
 
 #endif // SCHEMA_H

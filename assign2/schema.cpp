@@ -119,26 +119,22 @@ void Schema::create_index(const std::string& bin_filename, const std::string& in
 
 void Schema::load_index(const std::string& index_filename) {
     index_map.clear();
-    FILE* indexfile = fopen(index_filename.c_str(), "rb");
+
+    FILE* index_file = fopen(index_filename.c_str(), "rb");
     int key, offset;
 
-    while(fread(&key, sizeof(int), 1, indexfile)) {
-
-        fread(&offset, sizeof(int), 1, indexfile);
+    while(fread(&key, sizeof(int), 1, index_file)) {
+        fread(&offset, sizeof(int), 1, index_file);
         index_map.push_back(std::make_pair(key, offset));
     }
 
-    fclose(indexfile);
+    fclose(index_file);
 }
 
-std::vector<std::pair<int,int> >::iterator Schema::search_for_index(int index){
-
-    return std::lower_bound(index_map.begin(), index_map.end(), std::make_pair(index, 0), compare_index);
-
-}
-
-bool compare_index(const std::pair<int, int> op1, const std::pair<int, int> op2) {
-
-    return op1.first < op2.first;
-
+int Schema::search_for_key(int key){
+    auto it = std::lower_bound(index_map.begin(), index_map.end(), std::make_pair(key, 0), [](const std::pair<int, int>& op1, const std::pair<int, int>& op2) {
+        return op1.first < op2.first;
+    });
+    std::cout << it->second << std::endl;
+    return it->second;
 }

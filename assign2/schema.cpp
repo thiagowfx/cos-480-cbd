@@ -103,7 +103,7 @@ void Schema::create_index(const std::string& bin_filename, const std::string& in
     FILE* indexfile = fopen(index_filename.c_str(), "wb");
 
     int offset = 0;
-    int pace = HEADER_SIZE + size - sizeof(int); 
+    int pace = HEADER_SIZE + size - sizeof(int);
     int key;
 
     while(fread(&key, sizeof(int), 1, datafile)) {
@@ -117,25 +117,32 @@ void Schema::create_index(const std::string& bin_filename, const std::string& in
     }
 
     fclose(indexfile);
-    fclose(datafile);   
+    fclose(datafile);
 }
 
 void Schema::load_index(const std::string& index_filename) {
 
+    index_map.clear();
     FILE* indexfile = fopen(index_filename.c_str(), "rb");
     int key, offset;
 
     while(fread(&key, sizeof(int), 1, indexfile)) {
-        
+
         fread(&offset, sizeof(int), 1, indexfile);
-        index.push_back(std::make_pair(key, offset));
+        index_map.push_back(std::make_pair(key, offset));
     }
 
     fclose(indexfile);
 }
 
-int Schema::search_for_index(int index){
+std::vector<std::pair<int,int> >::iterator Schema::search_for_index(int index){
 
-    return 0;
+    return std::lower_bound(index_map.begin(), index_map.end(), std::make_pair(index, 0), compare_index);
+
+}
+
+bool compare_index(const std::pair<int, int> op1, const std::pair<int, int> op2) {
+
+    return op1.first < op2.first;
 
 }

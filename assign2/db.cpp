@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
     case OPERATION_SEARCH_INDEX:
       std::cout << "mode: search index" << std::endl;
       schemadb.get_schema(0).load_index(infile);
-      schemadb.get_schema(0).search_for_index(0); // TODO complete search_for_index
+      schemadb.get_schema(0).search_for_index(28); // TODO complete search_for_index
       break;
     // TODO more operations
   }

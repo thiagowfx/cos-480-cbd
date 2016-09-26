@@ -10,6 +10,7 @@
 void usage(const char* program) {
   // TODO usage
   std::cout << "usage: " << program << " --schemadb=<schemadb_filename> <mode> <mode options>" << std::endl;
+  std::cout << "\t" << "mode: --convert --in <csv file> --out <bin file>" << std::endl;
   exit(EXIT_FAILURE);
 }
 

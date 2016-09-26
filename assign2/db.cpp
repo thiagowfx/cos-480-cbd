@@ -8,9 +8,9 @@
 #include "schemadb.hpp"
 
 void usage(const char* program) {
-  // TODO usage
   std::cout << "usage: " << program << " --schemadb=<schemadb_filename> <mode> <mode options>" << std::endl;
-  std::cout << "\t" << "mode: --convert --in <csv file> --out <bin file>" << std::endl;
+  std::cout << "\t" << "mode: --convert --in <.csv file> --out <.bin file>" << std::endl;
+  std::cout << "\t" << "mode: --create-index --in <.bin file> --out <.index file>" << std::endl;
   exit(EXIT_FAILURE);
 }
 
@@ -44,7 +44,6 @@ int main(int argc, char *argv[]) {
   std::string schemadb_filename;
   std::string infile, outfile;
 
-  // TODO parsing
   while((ch = getopt_long(argc, argv, "hi:o:", long_options, &option_index)) != -1) {
     switch(ch) {
       case 'i':
@@ -71,15 +70,15 @@ int main(int argc, char *argv[]) {
     std::cout << "error: schemadb_filename not specified" << std::endl;
     usage(argv[0]);
   }
-
   SchemaDb schemadb(schemadb_filename);
+
   switch(operation_flag) {
     case -1:
       std::cout << "error: no mode specified" << std::endl;
       usage(argv[0]);
       break;
     case OPERATION_CONVERT:
-      std::cout << "mode: convert" << std::endl; // TODO logging
+      std::cout << "mode: convert" << std::endl;
       schemadb.get_schema(0).convert_to_bin(infile, outfile, true); // TODO ignore_first_line flag
       break;
     case OPERATION_CREATE_INDEX:
@@ -91,8 +90,9 @@ int main(int argc, char *argv[]) {
       schemadb.get_schema(0).load_index(infile);
       schemadb.get_schema(0).search_for_index(0); // TODO complete search_for_index
       break;
-    // TODO more operations
   }
 
   return EXIT_SUCCESS;
 }
+
+// TODO logging

@@ -1,5 +1,5 @@
-CXXFLAGS = -Wall -O2 -std=c++11
-SOURCES=db.cpp schema.cpp schemadb.cpp
+CXXFLAGS = -Wall -Wextra -O2 -std=c++11
+SOURCES=$(wildcard *.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=db
 

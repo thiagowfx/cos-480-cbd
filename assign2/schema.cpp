@@ -97,7 +97,7 @@ void Schema::convert_to_bin(const std::string& csv_filename, const std::string& 
     csv_file.close();
 }
 
-void Schema::create_index(const std::string& bin_filename, const std::string& index_filename) {
+void Schema::create_index(const std::string& bin_filename, const std::string& index_filename) const {
     FILE* bin_file = fopen(bin_filename.c_str(), "rb");
     FILE* index_file = fopen(index_filename.c_str(), "wb");
 
@@ -118,7 +118,6 @@ void Schema::create_index(const std::string& bin_filename, const std::string& in
 }
 
 void Schema::load_index(const std::string& index_filename) {
-
     index_map.clear();
     FILE* indexfile = fopen(index_filename.c_str(), "rb");
     int key, offset;

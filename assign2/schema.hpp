@@ -13,7 +13,7 @@ public:
     int get_id() const;
     std::string get_filename() const;
     void convert_to_bin(const std::string& csv_filename, const std::string& bin_filename, bool ignore_first_line = true) const;
-    void create_index(const std::string& bin_filename, const std::string& index_filename);
+    void create_index(const std::string& bin_filename, const std::string& index_filename) const;
     void load_index(const std::string& index_filename);
     std::vector<std::pair<int,int> >::iterator search_for_index(int index);
 

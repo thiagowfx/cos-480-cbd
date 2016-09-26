@@ -98,23 +98,23 @@ void Schema::convert_to_bin(const std::string& csv_filename, const std::string& 
 }
 
 void Schema::create_index(const std::string& bin_filename, const std::string& index_filename) {
-    FILE* datafile = fopen(bin_filename.c_str(), "rb");
-    FILE* indexfile = fopen(index_filename.c_str(), "wb");
+    FILE* bin_file = fopen(bin_filename.c_str(), "rb");
+    FILE* index_file = fopen(index_filename.c_str(), "wb");
 
     int offset = 0;
     int pace = HEADER_SIZE + size - sizeof(int);
     int key;
 
-    while(fread(&key, sizeof(int), 1, datafile)) {
-        fwrite(&key, sizeof(int), 1, indexfile);
-        fwrite(&offset, sizeof(int), 1, indexfile);
+    while(fread(&key, sizeof(int), 1, bin_file)) {
+        fwrite(&key, sizeof(int), 1, index_file);
+        fwrite(&offset, sizeof(int), 1, index_file);
 
         offset += pace;
-        fseek(datafile, pace, SEEK_CUR);
+        fseek(bin_file, pace, SEEK_CUR);
     }
 
-    fclose(indexfile);
-    fclose(datafile);
+    fclose(index_file);
+    fclose(bin_file);
 }
 
 void Schema::load_index(const std::string& index_filename) {

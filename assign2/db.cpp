@@ -1,3 +1,4 @@
+#include <cstring>
 #include <cstdio>
 #include <cstdlib>
 #include <getopt.h>
@@ -8,7 +9,7 @@
 
 void usage(const char* program) {
   // TODO usage
-  std::cout << "usage: " << program << " <mode> <mode options>" << std::endl;
+  std::cout << "usage: " << program << " --schemadb=<schemadb_filename> <mode> <mode options>" << std::endl;
   exit(EXIT_FAILURE);
 }
 
@@ -28,7 +29,7 @@ int main(int argc, char *argv[]) {
     {"search-index", no_argument, &operation_flag, OPERATION_SEARCH_INDEX},
 
     // Mode options.
-    // {"schema", no_argument, &operation_flag, OPERATION_SEARCH_INDEX}, // TODO schema
+    {"schemadb", required_argument, NULL, 0},
     {"in", required_argument, NULL, 'i'},
     {"out", required_argument, NULL, 'o'},
 
@@ -39,6 +40,7 @@ int main(int argc, char *argv[]) {
   int option_index = 0;
   int ch;
 
+  std::string schemadb_filename;
   std::string infile, outfile;
 
   // TODO parsing
@@ -51,6 +53,9 @@ int main(int argc, char *argv[]) {
         outfile = std::string(optarg);
         break;
       case 0:
+        if(!strcmp(long_options[option_index].name, "schemadb")) {
+          schemadb_filename = std::string(optarg);
+        }
         break;
       case 'h':
       case '?':
@@ -60,14 +65,21 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  // Validate arguments.
+  if(schemadb_filename.empty()) {
+    std::cout << "error: schemadb_filename not specified" << std::endl;
+    usage(argv[0]);
+  }
+
   switch(operation_flag) {
     case -1:
+      std::cout << "error: no mode specified" << std::endl;
       usage(argv[0]);
       break;
     case OPERATION_CONVERT:
-      std::cout << "operation convert" << std::endl; // TODO logging
-      SchemaDb schemadb("../data/schema/schemadb.cfg"); // TODO schemadb hard-coded
-      schemadb.get_schema(0).convert_to_bin(infile, outfile, true); // TODO ignore_first_line
+      std::cout << "mode: convert" << std::endl; // TODO logging
+      SchemaDb schemadb(schemadb_filename);
+      schemadb.get_schema(0).convert_to_bin(infile, outfile, true); // TODO ignore_first_line flag
       break;
     // TODO more operations
   }

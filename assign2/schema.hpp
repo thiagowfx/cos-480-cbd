@@ -5,6 +5,8 @@
 #include <utility>
 #include <vector>
 
+std::string get_current_timestamp();
+
 class Schema {
 public:
     Schema();
@@ -17,7 +19,7 @@ public:
     void load_index(const std::string& index_filename);
     int search_for_key(int key);
 
-    static const int TIMESTAMP_SIZE = 30; // TODO
+    static const int TIMESTAMP_SIZE = 25;
     static const int HEADER_SIZE = TIMESTAMP_SIZE * sizeof(char) + 2 * sizeof(int);
 
 private:

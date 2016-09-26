@@ -1,9 +1,19 @@
 #include "schema.hpp"
 
+#include <algorithm>
 #include <cstdio>
+#include <ctime>
 #include <fstream>
 #include <iostream>
-#include <algorithm>
+
+// Format Www Mmm dd hh:mm:ss yyyy
+std::string get_current_timestamp() {
+    time_t rawtime;
+    struct tm* timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    return asctime(timeinfo);
+}
 
 Schema::Schema(){
     compute_size();
@@ -65,7 +75,7 @@ void Schema::convert_to_bin(const std::string& csv_filename, const std::string& 
     int next_key = 0;
 
     while(csv_file.good() && csv_file.peek() != EOF) {
-        std::string timestamp = "2016-06-25 04:48:00"; // TODO
+        std::string timestamp = get_current_timestamp();
 
         // Write header.
         fwrite(&next_key, sizeof(int), 1, bin_file);

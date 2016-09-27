@@ -1,5 +1,5 @@
-CXXFLAGS = -Wall -Wextra -O2 -std=c++11
-SOURCES=$(wildcard *.cpp)
+CXXFLAGS = -Wall -Wextra -Wno-unused-parameter -O2 -std=c++11
+SOURCES=$(wildcard *.cpp) BPlusTree/bpt.cc
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=db
 

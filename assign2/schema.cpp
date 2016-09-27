@@ -19,6 +19,12 @@ Schema::Schema(){
     compute_size();
 }
 
+Schema::~Schema() {
+    if(!bplus) {
+        delete bplus;
+    }
+}
+
 Schema::Schema(const std::string& filename, int id) :
     schema_filename(filename),
     id(id) {
@@ -127,6 +133,22 @@ void Schema::create_index(const std::string& bin_filename, const std::string& in
     fclose(bin_file);
 }
 
+void Schema::create_index_bplus(const std::string& bin_filename, const std::string& index_filename) const {
+    FILE* bin_file = fopen(bin_filename.c_str(), "rb");
+    bpt::bplus_tree bplus(index_filename.c_str());
+
+    int offset = 0;
+    int pace = HEADER_SIZE + size - sizeof(int);
+    int key;
+
+    while(fread(&key, sizeof(int), 1, bin_file)) {
+        bplus.insert(bpt::key_t(std::to_string(key).c_str()), offset);
+        offset += pace;
+    }
+
+    fclose(bin_file);
+}
+
 void Schema::load_index(const std::string& index_filename) {
     index_map.clear();
 
@@ -141,10 +163,21 @@ void Schema::load_index(const std::string& index_filename) {
     fclose(index_file);
 }
 
+void Schema::load_index_bplus(const std::string& index_filename) {
+    bplus = new bpt::bplus_tree(index_filename.c_str());
+}
+
 int Schema::search_for_key(int key){
     auto it = std::lower_bound(index_map.begin(), index_map.end(), std::make_pair(key, 0), [](const std::pair<int, int>& op1, const std::pair<int, int>& op2) {
         return op1.first < op2.first;
     });
     std::cout << it->second << std::endl;
     return it->second;
+}
+
+int Schema::search_for_key_bplus(int key) {
+    bpt::value_t value;
+    // NOTE: if the return value is (-1), then such key hasn't been found.
+    bplus->search(bpt::key_t(std::to_string(key).c_str()), &value);
+    return value;
 }

@@ -11,7 +11,9 @@ void usage(const char* program) {
   std::cout << "usage: " << program << " --schemadb=<schemadb_filename> --schema=<schema_id> <mode> <mode options>" << std::endl;
   std::cout << "\t" << "mode: --convert --in <.csv file> --out <.bin file>" << std::endl;
   std::cout << "\t" << "mode: --create-index --in <.bin file> --out <.index file>" << std::endl;
+  std::cout << "\t" << "mode: --create-index-bplus --in <.bin file> --out <.index file>" << std::endl;
   std::cout << "\t" << "mode: --search-index --in <.index file> --key <key>" << std::endl;
+  std::cout << "\t" << "mode: --search-index-bplus --in <.index file> --key <key>" << std::endl;
   exit(EXIT_FAILURE);
 }
 
@@ -19,7 +21,9 @@ int main(int argc, char *argv[]) {
   enum {
     OPERATION_CONVERT,
     OPERATION_CREATE_INDEX,
+    OPERATION_CREATE_INDEX_BPLUS,
     OPERATION_SEARCH_INDEX,
+    OPERATION_SEARCH_INDEX_BPLUS,
   };
 
   int operation_flag = -1;
@@ -28,7 +32,9 @@ int main(int argc, char *argv[]) {
     // Modes.
     {"convert", no_argument, &operation_flag, OPERATION_CONVERT},
     {"create-index", no_argument, &operation_flag, OPERATION_CREATE_INDEX},
+    {"create-index-bplus", no_argument, &operation_flag, OPERATION_CREATE_INDEX},
     {"search-index", no_argument, &operation_flag, OPERATION_SEARCH_INDEX},
+    {"search-index-bplus", no_argument, &operation_flag, OPERATION_SEARCH_INDEX},
 
     // Mode options.
     {"schema", required_argument, NULL, 0},
@@ -81,7 +87,9 @@ int main(int argc, char *argv[]) {
     std::cout << "error: schemadb_filename not specified" << std::endl;
     usage(argv[0]);
   }
+
   SchemaDb schemadb(schemadb_filename);
+  Schema schema;
 
   switch(operation_flag) {
     case -1:
@@ -96,15 +104,23 @@ int main(int argc, char *argv[]) {
       std::cout << "mode: create index" << std::endl;
       schemadb.get_schema(schema_id).create_index(infile, outfile);
       break;
+    case OPERATION_CREATE_INDEX_BPLUS:
+      std::cout << "mode: create index w/ B+ tree" << std::endl;
+      schemadb.get_schema(schema_id).create_index_bplus(infile, outfile);
+      break;
     case OPERATION_SEARCH_INDEX:
       std::cout << "mode: search index" << std::endl;
-      Schema schema = schemadb.get_schema(schema_id);
+      schema = schemadb.get_schema(schema_id);
       schema.load_index(infile);
       schema.search_for_key(key);
+      break;
+    case OPERATION_SEARCH_INDEX_BPLUS:
+      std::cout << "mode: search index w/ B+ tree" << std::endl;
+      schema = schemadb.get_schema(schema_id);
+      schema.load_index_bplus(infile);
+      schema.search_for_key_bplus(key);
       break;
   }
 
   return EXIT_SUCCESS;
 }
-
-// TODO logging, error handling

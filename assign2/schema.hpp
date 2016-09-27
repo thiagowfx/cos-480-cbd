@@ -24,10 +24,12 @@ public:
     void load_index_bplus(const std::string& index_filename);
     int search_for_key(int key);
     int search_for_key_bplus(int key);
-
+    int search_for_key_raw(int key, const std::string& bin_filename);
+    
     static const int TIMESTAMP_SIZE = 25;
     static const int HEADER_SIZE = TIMESTAMP_SIZE * sizeof(char) + 2 * sizeof(int);
-
+    bpt::bplus_tree *bplus = NULL;
+    
 private:
     void compute_size();
 
@@ -36,7 +38,7 @@ private:
     std::string schema_filename;
     int id;
     std::vector<std::pair<int, int> > index_map;
-    bpt::bplus_tree *bplus = NULL;
+
 };
 
 #endif // SCHEMA_H

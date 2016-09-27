@@ -181,3 +181,25 @@ int Schema::search_for_key_bplus(int key) {
     bplus->search(bpt::key_t(std::to_string(key).c_str()), &value);
     return value;
 }
+
+int Schema::search_for_key_raw(int key, const std::string& bin_filename) {
+
+    FILE* binfile = fopen(bin_filename.c_str(), "rb");
+
+    int offset = 0;
+    int pace = HEADER_SIZE + size - sizeof(int);
+    int k;
+
+    while(fread(&k, sizeof(int), 1, binfile)) {
+
+        if (k == key) {
+            fclose(binfile);
+            return offset;
+        }
+        offset += pace;
+        fseek(binfile, pace, SEEK_CUR);
+    }
+
+    fclose(binfile);
+    return -1;
+}

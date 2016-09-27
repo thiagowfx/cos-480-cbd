@@ -5,8 +5,10 @@
 #include <iostream>
 #include <string>
 #include <time.h>
+#include <random>
 
 #include "schemadb.hpp"
+#include "benchmark.hpp"
 
 void usage(const char* program) {
   std::cout << "usage: " << program << " --schemadb=<schemadb_filename> --schema=<schema_id> <mode> <mode options>" << std::endl;
@@ -35,6 +37,7 @@ int main(int argc, char *argv[]) {
     OPERATION_CREATE_INDEX_BPLUS,
     OPERATION_SEARCH_INDEX,
     OPERATION_SEARCH_INDEX_BPLUS,
+    OPERATION_SEARCH_BENCHMARK
   };
 
   int operation_flag = -1;
@@ -46,6 +49,7 @@ int main(int argc, char *argv[]) {
     {"create-index-bplus", no_argument, &operation_flag, OPERATION_CREATE_INDEX_BPLUS},
     {"search-index", no_argument, &operation_flag, OPERATION_SEARCH_INDEX},
     {"search-index-bplus", no_argument, &operation_flag, OPERATION_SEARCH_INDEX_BPLUS},
+    {"search-benchmark", no_argument, &operation_flag, OPERATION_SEARCH_BENCHMARK},
 
     // Mode options.
     {"schema", required_argument, NULL, 0},
@@ -53,6 +57,9 @@ int main(int argc, char *argv[]) {
     {"in", required_argument, NULL, 'i'},
     {"out", required_argument, NULL, 'o'},
     {"key", required_argument, NULL, 0},
+    {"binfile", optional_argument, NULL, 0},
+    {"bplusfile", optional_argument, NULL, 0},
+
 
     {"help", no_argument, NULL, 'h'},
     {NULL, 0, NULL, 0},
@@ -65,6 +72,7 @@ int main(int argc, char *argv[]) {
   int schema_id = 0;
   int key = 0;
   std::string infile, outfile;
+  std::string indexfile, bplusfile;
 
   while((ch = getopt_long(argc, argv, "hi:o:", long_options, &option_index)) != -1) {
     switch(ch) {
@@ -83,6 +91,12 @@ int main(int argc, char *argv[]) {
         }
         else if(!strcmp(long_options[option_index].name, "key")) {
           key = std::stoi(std::string(optarg));
+        }
+        else if(!strcmp(long_options[option_index].name, "indexfile")) {
+          indexfile = std::string(optarg);
+        }
+        else if(!strcmp(long_options[option_index].name, "bplusfile")) {
+          bplusfile = std::string(optarg);
         }
         break;
       case 'h':
@@ -130,6 +144,39 @@ int main(int argc, char *argv[]) {
       schema = schemadb.get_schema(schema_id);
       schema.load_index_bplus(infile);
       schema.search_for_key_bplus(key);
+      break;
+    case OPERATION_SEARCH_BENCHMARK:
+      std::cout << "mode: search methods benchmarking" << std::endl;
+      schema = schemadb.get_schema(schema_id);
+
+      schema.load_index(indexfile);
+      schema.load_index_bplus(bplusfile);
+
+      std::default_random_engine rgen;
+      std::uniform_int_distribution<int> distribution(0,200);
+      int key = distribution(rgen);
+
+      int lkey = 50;
+      int hkey = 150;
+
+      std::vector<int> randomset;
+      for (unsigned i = 0; i < 100; ++i) randomset.push_back(distribution(rgen));
+
+      // sigle key search
+      BENCHMARK(schema.search_for_key(key));
+      BENCHMARK(schema.search_for_key_bplus(key));
+      BENCHMARK(schema.search_for_key_raw(key, infile));
+
+      // set search 
+      BENCHMARK(search_set(schema, randomset));
+      BENCHMARK(search_set_bplus(schema, randomset));
+      BENCHMARK(search_set_raw(schema, randomset, infile));
+
+      // range search
+      BENCHMARK(search_range(schema, lkey, hkey));
+      BENCHMARK(search_range_bplus(schema, lkey, hkey));
+      BENCHMARK(search_range_raw(schema, lkey, hkey, infile));
+      
       break;
   }
 

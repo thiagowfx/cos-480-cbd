@@ -1,0 +1,41 @@
+#include <iostream>
+
+#include "benchmark.hpp"    
+
+void search_range(Schema schema, int lowlimit, int highlimit) {
+
+    for(int i = lowlimit; i < highlimit; ++i ) schema.search_for_key(i);
+    
+}
+
+void search_range_bplus(Schema schema, int lowkey, int highkey) {
+    
+    bpt::value_t *values = nullptr;
+    bpt::key_t lk = bpt::key_t(std::to_string(lowkey).c_str());
+    schema.bplus->search_range(&lk, bpt::key_t(std::to_string(highkey).c_str()), values, 100);
+
+}
+
+void search_range_raw(Schema schema, int lowkey, int highkey, const std::string &filename) {
+
+    for(int i = lowkey; i < highkey; ++i ) schema.search_for_key_raw(i, filename);
+
+}
+
+void search_set(Schema schema, std::vector<int> set) {
+
+    for(const auto& element: set) schema.search_for_key(element);
+
+}
+
+void search_set_bplus(Schema schema, std::vector<int> set) {
+
+    for(const auto& element: set) schema.search_for_key_bplus(element);
+
+}
+
+void search_set_raw(Schema schema, std::vector<int> set, const std::string &filename) {
+
+    for(const auto& element: set) schema.search_for_key_raw(element, filename);
+
+}

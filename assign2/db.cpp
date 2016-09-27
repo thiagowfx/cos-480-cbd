@@ -24,13 +24,12 @@ void usage(const char* program) {
 do { \
   clock_t start = clock(); \
   f; \
-  int msec = (clock() - start) * 1000 / CLOCKS_PER_SEC; \
-  printf("Time taken %d seconds %d milliseconds\n", msec / 1000, msec % 1000); \
+  clock_t end = clock(); \
+  int usec = ((end - start) * 1e6) / CLOCKS_PER_SEC; \
+  printf("Time taken %d milliseconds %d microseconds\n", usec / 1000, usec % 1000); \
 } while(false)
 
 int main(int argc, char *argv[]) {
-  // BENCHMARK(sum(a,b));
-
   enum {
     OPERATION_CONVERT,
     OPERATION_CREATE_INDEX,
@@ -148,22 +147,46 @@ int main(int argc, char *argv[]) {
       schema.load_index_bplus(infile);
       schema.search_for_key_bplus(key);
       break;
-    case OPERATION_SEARCH_BENCHMARK:
+    case OPERATION_SEARCH_BENCHMARK:    
       std::cout << "mode: search methods benchmarking" << std::endl;
+      
+      std::string schemabin ("../data/schema/company.bin");
+      std::string index ("../data/schema/company.index");
+      std::string bindex ("../data/schema/company.bindex");
       schema = schemadb.get_schema(schema_id);
+      
+      std::cout << "converting to bin" << std::endl;
 
-      schema.load_index("../data/schema/company.index");
-      schema.load_index_bplus("../data/schema/company.bindex");
+      // create files
+      schema.convert_to_bin(infile, schemabin);
 
+      std::cout << "creating index" << std::endl;
+
+      schema.create_index(schemabin, index);
+
+      std::cout << "creating bplus index" << std::endl;
+
+      schema.create_index_bplus(schemabin, bindex);
+
+      std::cout << "indexes have been created" << std::endl;
+
+      schema.load_index(index);
+      schema.load_index_bplus(bindex);
+
+      std::cout << "indexes have been loaded" << std::endl;
+
+      // gen search keys
       std::default_random_engine rgen;
-      std::uniform_int_distribution<int> distribution(0,200);
+      std::uniform_int_distribution<int> distribution(0,9808);
       int key = distribution(rgen);
 
-      int lkey = 50;
-      int hkey = 150;
+      int lkey = 5000;
+      int hkey = 7000;
 
       std::vector<int> randomset;
       for (unsigned i = 0; i < 100; ++i) randomset.push_back(distribution(rgen));
+
+      std::cout << "random set has been generated" << std::endl;
 
       // sigle key search
       std::cout << "Single search" << std::endl << std::endl;;

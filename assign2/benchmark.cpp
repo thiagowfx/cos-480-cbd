@@ -9,11 +9,12 @@ void search_range(Schema schema, int lowlimit, int highlimit) {
 }
 
 void search_range_bplus(Schema schema, int lowkey, int highkey) {
-    
-    bpt::value_t *values = nullptr;
+    int size = (highkey - lowkey) + 1;
+    bool next;
+    bpt::value_t *values = new bpt::value_t[size];
     bpt::key_t lk = bpt::key_t(std::to_string(lowkey).c_str());
-    schema.bplus->search_range(&lk, bpt::key_t(std::to_string(highkey).c_str()), values, 100);
-
+    schema.bplus->search_range(&lk, bpt::key_t(std::to_string(highkey).c_str()), values, size, &next);
+    delete [] values;
 }
 
 void search_range_raw(Schema schema, int lowkey, int highkey, const std::string &filename) {

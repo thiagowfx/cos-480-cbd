@@ -43,9 +43,9 @@ int main(int argc, char *argv[]) {
     // Modes.
     {"convert", no_argument, &operation_flag, OPERATION_CONVERT},
     {"create-index", no_argument, &operation_flag, OPERATION_CREATE_INDEX},
-    {"create-index-bplus", no_argument, &operation_flag, OPERATION_CREATE_INDEX},
+    {"create-index-bplus", no_argument, &operation_flag, OPERATION_CREATE_INDEX_BPLUS},
     {"search-index", no_argument, &operation_flag, OPERATION_SEARCH_INDEX},
-    {"search-index-bplus", no_argument, &operation_flag, OPERATION_SEARCH_INDEX},
+    {"search-index-bplus", no_argument, &operation_flag, OPERATION_SEARCH_INDEX_BPLUS},
 
     // Mode options.
     {"schema", required_argument, NULL, 0},

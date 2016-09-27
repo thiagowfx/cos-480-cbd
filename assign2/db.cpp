@@ -166,19 +166,33 @@ int main(int argc, char *argv[]) {
       for (unsigned i = 0; i < 100; ++i) randomset.push_back(distribution(rgen));
 
       // sigle key search
+      std::cout << "Single search" << std::endl << std::endl;;
+      std::cout << "Sequential Index" << std::endl;
       BENCHMARK(schema.search_for_key(key));
+      std::cout << "BPlus" << std::endl;
       BENCHMARK(schema.search_for_key_bplus(key));
+      std::cout << "Raw file brute force" << std::endl;
       BENCHMARK(schema.search_for_key_raw(key, "../data/schema/company.bin"));
+      std::cout << std::endl;
 
-      // set search 
+      // set search
+      std::cout << "Random set search" << std::endl << std::endl;;
+      std::cout << "Sequential Index" << std::endl; 
       BENCHMARK(search_set(schema, randomset));
+      std::cout << "BPlus" << std::endl;
       BENCHMARK(search_set_bplus(schema, randomset));
+      std::cout << "Raw file brute force" << std::endl;
       BENCHMARK(search_set_raw(schema, randomset, "../data/schema/company.bin"));
+      std::cout << std::endl;
 
       // range search
+      std::cout << "Range search" << std::endl << std::endl;
       BENCHMARK(search_range(schema, lkey, hkey));
+      std::cout << "BPlus" << std::endl;
       BENCHMARK(search_range_bplus(schema, lkey, hkey));
+      std::cout << "Raw file brute force" << std::endl;
       BENCHMARK(search_range_raw(schema, lkey, hkey, "../data/schema/company.bin"));
+      std::cout << std::endl;
       
       break;
   }

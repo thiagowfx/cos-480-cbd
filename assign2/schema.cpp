@@ -171,7 +171,6 @@ int Schema::search_for_key(int key){
     auto it = std::lower_bound(index_map.begin(), index_map.end(), std::make_pair(key, 0), [](const std::pair<int, int>& op1, const std::pair<int, int>& op2) {
         return op1.first < op2.first;
     });
-    std::cout << it->second << std::endl;
     return it->second;
 }
 

@@ -22,9 +22,9 @@ public:
     void create_index_bplus(const std::string& bin_filename, const std::string& index_filename) const;
     void load_index(const std::string& index_filename);
     void load_index_bplus(const std::string& index_filename);
-    int search_for_key(int key);
-    int search_for_key_bplus(int key);
-    int search_for_key_raw(int key, const std::string& bin_filename);
+    int search_for_key(int key) const;
+    int search_for_key_bplus(int key) const;
+    int search_for_key_raw(int key, const std::string& bin_filename) const;
     
     static const int TIMESTAMP_SIZE = 25;
     static const int HEADER_SIZE = TIMESTAMP_SIZE * sizeof(char) + 2 * sizeof(int);

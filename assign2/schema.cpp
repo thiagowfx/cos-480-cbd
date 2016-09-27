@@ -167,21 +167,21 @@ void Schema::load_index_bplus(const std::string& index_filename) {
     bplus = new bpt::bplus_tree(index_filename.c_str());
 }
 
-int Schema::search_for_key(int key){
+int Schema::search_for_key(int key) const {
     auto it = std::lower_bound(index_map.begin(), index_map.end(), std::make_pair(key, 0), [](const std::pair<int, int>& op1, const std::pair<int, int>& op2) {
         return op1.first < op2.first;
     });
     return it->second;
 }
 
-int Schema::search_for_key_bplus(int key) {
+int Schema::search_for_key_bplus(int key) const {
     bpt::value_t value;
     // NOTE: if the return value is (-1), then such key hasn't been found.
     bplus->search(bpt::key_t(std::to_string(key).c_str()), &value);
     return value;
 }
 
-int Schema::search_for_key_raw(int key, const std::string& bin_filename) {
+int Schema::search_for_key_raw(int key, const std::string& bin_filename) const {
 
     FILE* binfile = fopen(bin_filename.c_str(), "rb");
 

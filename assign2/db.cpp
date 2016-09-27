@@ -4,6 +4,7 @@
 #include <getopt.h>
 #include <iostream>
 #include <string>
+#include <time.h>
 
 #include "schemadb.hpp"
 
@@ -17,7 +18,17 @@ void usage(const char* program) {
   exit(EXIT_FAILURE);
 }
 
+#define BENCHMARK(f) \
+do { \
+  clock_t start = clock(); \
+  f; \
+  int msec = (clock() - start) * 1000 / CLOCKS_PER_SEC; \
+  printf("Time taken %d seconds %d milliseconds\n", msec / 1000, msec % 1000); \
+} while(false)
+
 int main(int argc, char *argv[]) {
+  // BENCHMARK(sum(a,b));
+
   enum {
     OPERATION_CONVERT,
     OPERATION_CREATE_INDEX,

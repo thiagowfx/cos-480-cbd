@@ -135,7 +135,7 @@ void Schema::create_index(const std::string& bin_filename, const std::string& in
 
 void Schema::create_index_bplus(const std::string& bin_filename, const std::string& index_filename) const {
     FILE* bin_file = fopen(bin_filename.c_str(), "rb");
-    bpt::bplus_tree bplus(index_filename.c_str());
+    bpt::bplus_tree bplus(index_filename.c_str(), true);
 
     int offset = 0;
     int pace = HEADER_SIZE + size - sizeof(int);

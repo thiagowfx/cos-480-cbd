@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
     {"in", required_argument, NULL, 'i'},
     {"out", required_argument, NULL, 'o'},
     {"key", required_argument, NULL, 0},
-    {"binfile", optional_argument, NULL, 0},
+    {"indexfile", optional_argument, NULL, 0},
     {"bplusfile", optional_argument, NULL, 0},
 
 
@@ -123,15 +123,18 @@ int main(int argc, char *argv[]) {
       break;
     case OPERATION_CONVERT:
       std::cout << "mode: convert" << std::endl;
-      schemadb.get_schema(schema_id).convert_to_bin(infile, outfile, true);
+      schema = schemadb.get_schema(schema_id);
+      schema.convert_to_bin(infile, outfile, true);
       break;
     case OPERATION_CREATE_INDEX:
       std::cout << "mode: create index" << std::endl;
-      schemadb.get_schema(schema_id).create_index(infile, outfile);
+      schema = schemadb.get_schema(schema_id);
+      schema.create_index(infile, outfile);
       break;
     case OPERATION_CREATE_INDEX_BPLUS:
       std::cout << "mode: create index w/ B+ tree" << std::endl;
-      schemadb.get_schema(schema_id).create_index_bplus(infile, outfile);
+      schema = schemadb.get_schema(schema_id);
+      schema.create_index_bplus(infile, outfile);
       break;
     case OPERATION_SEARCH_INDEX:
       std::cout << "mode: search index" << std::endl;
@@ -149,8 +152,8 @@ int main(int argc, char *argv[]) {
       std::cout << "mode: search methods benchmarking" << std::endl;
       schema = schemadb.get_schema(schema_id);
 
-      schema.load_index(indexfile);
-      schema.load_index_bplus(bplusfile);
+      schema.load_index("../data/schema/company.index");
+      schema.load_index_bplus("../data/schema/company.bindex");
 
       std::default_random_engine rgen;
       std::uniform_int_distribution<int> distribution(0,200);
@@ -165,17 +168,17 @@ int main(int argc, char *argv[]) {
       // sigle key search
       BENCHMARK(schema.search_for_key(key));
       BENCHMARK(schema.search_for_key_bplus(key));
-      BENCHMARK(schema.search_for_key_raw(key, infile));
+      BENCHMARK(schema.search_for_key_raw(key, "../data/schema/company.bin"));
 
       // set search 
       BENCHMARK(search_set(schema, randomset));
       BENCHMARK(search_set_bplus(schema, randomset));
-      BENCHMARK(search_set_raw(schema, randomset, infile));
+      BENCHMARK(search_set_raw(schema, randomset, "../data/schema/company.bin"));
 
       // range search
       BENCHMARK(search_range(schema, lkey, hkey));
       BENCHMARK(search_range_bplus(schema, lkey, hkey));
-      BENCHMARK(search_range_raw(schema, lkey, hkey, infile));
+      BENCHMARK(search_range_raw(schema, lkey, hkey, "../data/schema/company.bin"));
       
       break;
   }

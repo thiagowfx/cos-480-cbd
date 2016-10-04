@@ -158,20 +158,20 @@ int main(int argc, char *argv[]) {
       std::cout << "converting to bin" << std::endl;
 
       // create files
-      schema.convert_to_bin(infile, schemabin);
+      //schema.convert_to_bin(infile, schemabin);
 
       std::cout << "creating index" << std::endl;
 
-      schema.create_index(schemabin, index);
+      //schema.create_index(schemabin, index);
 
       std::cout << "creating bplus index" << std::endl;
 
-      schema.create_index_bplus(schemabin, bindex);
+      //schema.create_index_bplus(schemabin, bindex);
 
       std::cout << "indexes have been created" << std::endl;
 
       schema.load_index(index);
-      schema.load_index_bplus(bindex);
+      //schema.load_index_bplus(bindex);
 
       std::cout << "indexes have been loaded" << std::endl;
 
@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
       std::cout << "Sequential Index" << std::endl;
       BENCHMARK(schema.search_for_key(key));
       std::cout << "BPlus" << std::endl;
-      BENCHMARK(schema.search_for_key_bplus(key));
+      //BENCHMARK(schema.search_for_key_bplus(key));
       std::cout << "Raw file brute force" << std::endl;
       BENCHMARK(schema.search_for_key_raw(key, "../data/schema/company.bin"));
       std::cout << std::endl;
@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
       std::cout << "Sequential Index" << std::endl; 
       BENCHMARK(search_set(schema, randomset));
       std::cout << "BPlus" << std::endl;
-      BENCHMARK(search_set_bplus(schema, randomset));
+      //BENCHMARK(search_set_bplus(schema, randomset));
       std::cout << "Raw file brute force" << std::endl;
       BENCHMARK(search_set_raw(schema, randomset, "../data/schema/company.bin"));
       std::cout << std::endl;
@@ -212,7 +212,7 @@ int main(int argc, char *argv[]) {
       std::cout << "Range search" << std::endl << std::endl;
       BENCHMARK(search_range(schema, lkey, hkey));
       std::cout << "BPlus" << std::endl;
-      BENCHMARK(search_range_bplus(schema, lkey, hkey));
+      //BENCHMARK(search_range_bplus(schema, lkey, hkey));
       std::cout << "Raw file brute force" << std::endl;
       BENCHMARK(search_range_raw(schema, lkey, hkey, "../data/schema/company.bin"));
       std::cout << std::endl;

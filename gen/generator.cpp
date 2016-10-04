@@ -18,6 +18,8 @@ int main(int argc, char * argv []) {
     std::ifstream last_file (argv[2]);
     std::ofstream out_file (argv [3]);
 
+    int elements = 10000000;
+    
     std::vector<std::string> names;
     std::vector<std::string> last_names;
 
@@ -40,13 +42,15 @@ int main(int argc, char * argv []) {
 
     }
 
+    out_file << "name" << "," << "last name" << std::endl;
     // gen records
     int key = 0;
     for (const auto& name: names) {
         for (const auto& last_name: last_names) {
 
-            out_file << key << " " << name << " " << last_name << std::endl;
+	  out_file << name << "," << last_name << std::endl;
             ++ key;
+	    if (key == elements) break;
 
         }
     }
